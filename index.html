@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusConnect RCPIT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+.card-hover {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.quiz-option {
+    transition: all 0.2s ease;
+}
+.quiz-option:hover {
+    background-color: #f3f4f6;
+}
+.quiz-option.selected {
+    background-color: #dbeafe;
+    border-color: #3b82f6;
+}
+.progress-bar {
+    transition: width 0.5s ease;
+}
+
+/* Ensure form controls always use a visible (dark) text color and readable placeholders.
+   This fixes cases where input/select/textarea text appears invisible due to inherited styles. */
+input, textarea, select {
+    color: #111827; /* Tailwind's gray-900 */
+}
+input::placeholder, textarea::placeholder {
+    color: #9CA3AF; /* Tailwind's placeholder-gray-400 */
+}
+/*
+   Ensure form controls always use a visible (dark) text color and readable placeholders,
+   and force a white background so text remains readable across themes/browsers.
+   Also override browser autofill styling which can make text/background hard to read.
+*/
+input, textarea, select {
+    color: #111827; /* Tailwind's gray-900 */
+    background-color: #ffffff;
+}
+input::placeholder, textarea::placeholder {
+    color: #9CA3AF; /* Tailwind's placeholder-gray-400 */
+}
+
+/* Fix Chrome/Chromium/Edge autofill so text and background stay readable */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #111827 !important;
+    color: #111827 !important;
+}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <img src="1719236764.png" alt="CampusConnect Logo" class="h-8 w-auto mr-3">
+                    <h1 class="text-xl font-bold">CampusConnect RCPIT</h1>
+                </div>
+                <div id="nav-user-info" class="hidden items-center space-x-4">
+                    <span id="user-name" class="font-medium"></span>
+                    <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div id="login-screen" class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <img src="1719236764.png" alt="System Logo" class="h-20 w-auto mx-auto mb-4">
+                <h2 class="text-3xl font-extrabold text-gray-900">Welcome to CampusConnect RCPIT</h2>
+                <p class="mt-2 text-gray-600">Faculty–Student Learning Ecosystem</p>
+            </div>
+            <form class="mt-8 space-y-6" onsubmit="handleLogin(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input id="email" type="email" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input id="password" type="password" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter your password">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                        <select id="role" class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full gradient-bg text-white py-3 px-4 rounded-lg hover:opacity-90 transition-all font-medium">
+                    Sign In
+                </button>
+            </form>
+            <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                <h3 class="font-semibold text-blue-900 mb-2">Demo Credentials:</h3>
+                <div class="text-sm text-blue-800 space-y-1">
+                    <p><strong>Student:</strong> student@rc.edu / 123</p>
+                    <p><strong>Faculty:</strong> any faculty email / 12345</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="student-dashboard" class="hidden">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Student Dashboard</h1>
+                <p class="text-gray-600">Access your courses and track your progress</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-book text-blue-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Enrolled Courses</p>
+                            <p class="text-2xl font-bold text-gray-900" id="enrolled-courses">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-check-circle text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Completed Quizzes</p>
+                            <p class="text-2xl font-bold text-gray-900" id="completed-quizzes">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                            <i class="fas fa-star text-yellow-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Average Score</p>
+                            <p class="text-2xl font-bold text-gray-900" id="average-score">--</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <i class="fas fa-file-alt text-purple-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Study Materials</p>
+                            <p class="text-2xl font-bold text-gray-900" id="study-materials">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Your Courses</h2>
+                <div id="student-courses" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border p-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Recent Activity</h3>
+                <div id="recent-activity" class="space-y-3">
+                    <p class="text-gray-500">No recent activity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="faculty-dashboard" class="hidden">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Faculty Dashboard</h1>
+                    <p class="text-gray-600">Manage your courses and track student progress</p>
+                </div>
+                
+                <div class="space-x-3">
+                    <button onclick="showCreateStudentModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                        + Create Student Account
+                    </button>
+                    <button onclick="showUploadModal()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all">
+                        <i class="fas fa-upload mr-2"></i>Upload Content
+                    </button>
+                    <button onclick="showQuizModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-all">
+                        <i class="fas fa-plus mr-2"></i>Create Quiz
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-blue-100 rounded-lg">
+                            <i class="fas fa-chalkboard-teacher text-blue-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">My Courses</p>
+                            <p class="text-2xl font-bold text-gray-900" id="faculty-courses">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-green-100 rounded-lg">
+                            <i class="fas fa-users text-green-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Students</p>
+                            <p class="text-2xl font-bold text-gray-900" id="total-students">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-yellow-100 rounded-lg">
+                            <i class="fas fa-file-upload text-yellow-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Uploaded Content</p>
+                            <p class="text-2xl font-bold text-gray-900" id="uploaded-content">0</p>
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border card-hover">
+                    <div class="flex items-center">
+                        <div class="p-3 bg-purple-100 rounded-lg">
+                            <i class="fas fa-question-circle text-purple-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Created Quizzes</p>
+                            <p class="text-2xl font-bold text-gray-900" id="created-quizzes">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">My Courses</h3>
+                    <div id="faculty-course-list" class="space-y-3">
+                        </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Recent Uploads / Student List</h3>
+                    <div id="recent-uploads" class="space-y-3">
+                        <p class="text-gray-500">No recent uploads</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Created Quizzes Section (Faculty) -->
+            <div class="bg-white rounded-xl shadow-sm border p-6 mt-6">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Created Quizzes</h3>
+                <div id="faculty-created-quizzes" class="space-y-3">
+                    <p class="text-gray-500">No quizzes created yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="course-detail" class="hidden">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="mb-6">
+                <button onclick="goBack()" class="text-indigo-600 hover:text-indigo-800 mb-4">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                </button>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 id="course-title" class="text-3xl font-bold text-gray-900"></h1>
+                        <p id="course-faculty" class="text-gray-600"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div id="course-materials-section" class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Course Materials</h3>
+                        <div id="course-materials" class="space-y-3">
+                            <p class="text-gray-500">No materials uploaded yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="side-panel-quizzes">
+                    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Available Quizzes</h3>
+                        <div id="course-quizzes" class="space-y-3">
+                            <p class="text-gray-500">No quizzes available</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="side-panel-enrollments" class="hidden">
+                     <div class="bg-white rounded-xl shadow-sm border p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Enrolled Students</h3>
+                        <div id="course-enrollment-list" class="space-y-2 text-sm max-h-96 overflow-y-auto">
+                            <p class="text-gray-500">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-interface" class="hidden">
+        <div class="max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="mb-6">
+                <button onclick="exitQuiz()" class="text-indigo-600 hover:text-indigo-800 mb-4">
+                    <i class="fas fa-arrow-left mr-2"></i>Exit Quiz
+                </button>
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h1 id="quiz-title" class="text-2xl font-bold text-gray-900"></h1>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-600">Question <span id="current-question">1</span> of <span id="total-questions">1</span></p>
+                            <div class="w-48 bg-gray-200 rounded-full h-2 mt-2">
+                                <div id="quiz-progress" class="bg-indigo-600 h-2 rounded-full progress-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="quiz-content">
+                        <div id="question-container" class="mb-6">
+                            <h3 id="question-text" class="text-lg font-medium text-gray-900 mb-4"></h3>
+                            <div id="options-container" class="space-y-3">
+                                </div>
+                        </div>
+
+                        <div class="flex justify-between">
+                            <button id="prev-btn" onclick="previousQuestion()" class="px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50" disabled>
+                                <i class="fas fa-chevron-left mr-2"></i>Previous
+                            </button>
+                            <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all">
+                                Next<i class="fas fa-chevron-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="quiz-results" class="hidden text-center">
+                        <div class="mb-6">
+                            <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+                            <h2 class="text-2xl font-bold text-gray-900 mb-2">Quiz Completed!</h2>
+                            <p class="text-gray-600">Your score: <span id="final-score" class="font-bold text-indigo-600"></span></p>
+                        </div>
+                        <button onclick="exitQuiz()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all">
+                            Return to Course
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="upload-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Upload Content</h3>
+                <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="handleUpload(event)" enctype="multipart/form-data">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                        <select id="upload-course" required class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Content Type</label>
+                        <select id="content-type" required class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="lecture">Video Lecture</option>
+                            <option value="notes">Notes</option>
+                            <option value="mindmap">Mind Map</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input id="content-title" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter content title">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="content-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter description"></textarea>
+                    </div>
+                    
+                    <div id="video-url-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Video Link (YouTube, etc.)</label>
+                        <input id="content-url" type="url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Paste video URL here (e.g., https://youtu.be/xyz)">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload File (optional)</label>
+                        <input id="content-file" name="file" type="file" class="w-full" />
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="quiz-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Create Quiz</h3>
+                <button onclick="closeQuizModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="handleQuizCreation(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                        <select id="quiz-course" required class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quiz Title</label>
+                        <input id="quiz-title-input" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter quiz title">
+                    </div>
+                    <div id="questions-container">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-medium text-gray-900">Questions</h4>
+                            <button type="button" onclick="addQuestion()" class="text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-plus mr-1"></i>Add Question
+                            </button>
+                        </div>
+                        <div id="questions-list">
+                            </div>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" onclick="closeQuizModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all">Create Quiz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="create-student-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold mb-4">Create Student Account</h3>
+            <form id="create-student-form" onsubmit="handleStudentCreation(event)">
+            <input type="text" id="student-name" placeholder="Full Name" required class="w-full mb-3 px-3 py-2 border rounded-lg">
+            <input type="email" id="student-email" placeholder="Email (e.g. student@rcpit.edu)" required class="w-full mb-3 px-3 py-2 border rounded-lg">
+            <input type="password" id="student-password" placeholder="Password" required class="w-full mb-4 px-3 py-2 border rounded-lg">
+            <div class="flex justify-end gap-2">
+                <button type="button" onclick="closeCreateStudentModal()" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Create</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Quiz Results Modal (Faculty) -->
+    <div id="quiz-results-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Quiz Results</h3>
+                <button onclick="closeQuizResultsModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="quiz-results-list" class="space-y-2 text-sm">
+                <p class="text-gray-500">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let currentCourse = null;
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let quizAnswers = [];
+        let questionCounter = 1;
+        
+        // Disable right-click context menu across the entire page
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // Data Store (Will hold data fetched from DB)
+        let allCourses = [];
+        let courseContent = [];
+        let quizzes = [];
+        let quizResults = [];
+        let allStudents = [];
+
+        // Utility: Fetch Courses from DB
+        async function fetchInitialData() {
+            try {
+                const res = await fetch('/api/quizzes');
+                if (res.ok) {
+                    quizzes = (await res.json()).quizzes;
+                }
+                // We'll treat the faculty-specific courses as the 'master' course list
+                const facultyRes = await fetch('/api/auth/login', {
+                    method: 'POST', 
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email: 'kaminee@rc.edu', password: '12345'})
+                });
+                // Temporarily log in as a faculty to get the initial course data from their subjects field
+                if (facultyRes.ok) {
+                    const facultyUser = (await facultyRes.json()).user;
+                    // Note: This is a simplification. A real app would have a dedicated /api/courses endpoint.
+                    const initialCoursesData = [
+                        { id: 1, name: 'Data Structures', faculty: 'Prof. Kaminee Patil', description: 'Learn fundamental data structures and algorithms' },
+                        { id: 2, name: 'Open Electives', faculty: 'Dr. Pradip Patil', description: 'Explore various elective subjects' },
+                        { id: 3, name: 'Economic and Finance Management', faculty: 'Dr. Pankaj Bavisker', description: 'Understanding economics and financial management' },
+                        { id: 4, name: 'Operating System', faculty: 'Prof. Priyanka Lanjewar', description: 'Core concepts of operating systems' }
+                    ];
+                    allCourses = initialCoursesData.filter(c => facultyUser.subjects.includes(c.id));
+                    // Add the courses from other faculties for student view
+                    allCourses.push(...initialCoursesData.filter(c => !allCourses.some(ac => ac.id === c.id)));
+                } else {
+                    console.error("Could not fetch initial course data (or faculty login failed)");
+                }
+
+            } catch (e) {
+                console.error('Error fetching initial data:', e);
+            }
+        }
+        
+        // --- Authentication Functions ---
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!res.ok) throw new Error('Invalid credentials');
+                
+                const data = await res.json();
+                currentUser = data.user;
+
+                // Simple check to ensure role matches
+                if (currentUser.role !== role) {
+                    alert(`Invalid role selected for ${email}. Please select the correct role.`);
+                    currentUser = null;
+                    return;
+                }
+
+                document.getElementById('user-name').textContent = currentUser.name || currentUser.email;
+                document.getElementById('nav-user-info').classList.remove('hidden');
+                document.getElementById('nav-user-info').classList.add('flex');
+                showDashboard(role);
+            } catch (e) {
+                alert('Invalid credentials. Please try again.');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('nav-user-info').classList.add('hidden');
+            showView('login-screen');
+        }
+
+        // --- Navigation Functions ---
+        function showView(viewId) {
+            const views = ['login-screen', 'student-dashboard', 'faculty-dashboard', 'course-detail', 'quiz-interface'];
+            views.forEach(view => {
+                document.getElementById(view).classList.add('hidden');
+            });
+            document.getElementById(viewId).classList.remove('hidden');
+        }
+
+        function showDashboard(role) {
+            if (role === 'student') {
+                loadStudentDashboard();
+                showView('student-dashboard');
+            } else {
+                loadFacultyDashboard();
+                showView('faculty-dashboard');
+            }
+        }
+
+        function goBack() {
+            if (currentUser.role === 'student') {
+                showView('student-dashboard');
+            } else {
+                showView('faculty-dashboard');
+            }
+        }
+
+        // --- Student Dashboard Functions ---
+        async function loadStudentDashboard() {
+            await loadAllContent();
+            await loadQuizResults();
+
+            // All students are currently enrolled in all courses for this demo
+            document.getElementById('enrolled-courses').textContent = allCourses.length;
+            document.getElementById('study-materials').textContent = courseContent.length;
+
+            const userResults = quizResults.filter(r => r.studentEmail === currentUser.email);
+            document.getElementById('completed-quizzes').textContent = userResults.length;
+
+            if (userResults.length > 0) {
+                const avgScore = userResults.reduce((sum, r) => sum + r.score, 0) / userResults.length;
+                document.getElementById('average-score').textContent = Math.round(avgScore) + '%';
+            } else {
+                document.getElementById('average-score').textContent = '--';
+            }
+
+            // Load courses
+            const coursesContainer = document.getElementById('student-courses');
+            coursesContainer.innerHTML = allCourses.map(course => `
+                <div class="bg-white rounded-xl shadow-sm border p-6 card-hover cursor-pointer" onclick="viewCourse(${course.id}, 'student')">
+                    <div class="flex items-center mb-4">
+                        <div class="p-3 bg-indigo-100 rounded-lg">
+                            <i class="fas fa-book text-indigo-600"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="font-bold text-gray-900">${course.name}</h3>
+                            <p class="text-sm text-gray-600">${course.faculty}</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-3">${course.description}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">Enrolled</span>
+                        <i class="fas fa-arrow-right text-gray-400"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Faculty Dashboard Functions ---
+        async function loadFacultyDashboard() {
+            const facultyCourses = allCourses.filter(course =>
+                currentUser.subjects.includes(course.id)
+            );
+
+            await loadFacultyContent();
+            await loadQuizzes();
+            await loadAllStudents();
+
+            document.getElementById('faculty-courses').textContent = facultyCourses.length;
+            document.getElementById('total-students').textContent = allStudents.length;
+            document.getElementById('uploaded-content').textContent = courseContent.length;
+            document.getElementById('created-quizzes').textContent = quizzes.filter(q => q.createdBy === currentUser.email).length;
+
+            // Load faculty courses list
+            const coursesList = document.getElementById('faculty-course-list');
+            coursesList.innerHTML = facultyCourses.map(course => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <h4 class="font-medium text-gray-900">${course.name}</h4>
+                        <p class="text-sm text-gray-600">ID: ${course.id}</p>
+                    </div>
+                    <button onclick="viewCourse(${course.id}, 'faculty')" class="text-indigo-600 hover:text-indigo-800">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </div>
+            `).join('');
+
+            // Populate dropdowns only with their subjects
+            populateCourseDropdowns(facultyCourses);
+
+            // show all students (names) to faculty
+            const studentListHtml = allStudents.map(s => 
+                `<div class="p-2 border-b">${s.name} &lt;${s.email}&gt;</div>`
+            ).join('');
+            
+            document.getElementById('recent-uploads').innerHTML = `
+                <div>
+                    <h4 class="font-medium mb-2">Total Students (${allStudents.length})</h4>
+                    ${studentListHtml || '<div class="text-gray-500">No students registered.</div>'}
+                </div>
+            `;
+            // Render created quizzes list (with view/download actions) for this faculty
+            renderFacultyCreatedQuizzes();
+        }
+        
+        function populateCourseDropdowns(courseList) {
+            const uploadSelect = document.getElementById('upload-course');
+            const quizSelect = document.getElementById('quiz-course');
+            
+            const options = courseList.map(course => 
+                `<option value="${course.id}">${course.name}</option>`
+            ).join('');
+            
+            uploadSelect.innerHTML = options;
+            quizSelect.innerHTML = options;
+        }
+
+        // --- Faculty Created Quizzes UI ---
+        function renderFacultyCreatedQuizzes() {
+            const container = document.getElementById('faculty-created-quizzes');
+            const created = quizzes.filter(q => q.createdBy === currentUser.email);
+            if (!created || created.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">No quizzes created yet</p>';
+                return;
+            }
+
+            container.innerHTML = created.map(q => `
+                <div class="p-4 bg-gray-50 rounded-lg flex items-center justify-between">
+                    <div>
+                        <h4 class="font-medium text-gray-900">${q.title}</h4>
+                        <p class="text-sm text-gray-600">${q.questions.length} questions</p>
+                    </div>
+                    <div class="space-x-2">
+                        <button onclick="viewQuizResults(${q.id})" class="px-3 py-2 bg-white border border-gray-200 rounded-lg text-indigo-600 hover:bg-indigo-50">View Results</button>
+                        <button onclick="downloadQuizReport(${q.id})" class="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Download Excel Report</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function downloadQuizReport(quizId) {
+            try {
+                const res = await fetch(`/api/quizzes/${quizId}/export`);
+                if (!res.ok) throw new Error('Failed to fetch report');
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `quiz_${quizId}_results.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                console.error(e);
+                alert('Could not download report.');
+            }
+        }
+
+        async function viewQuizResults(quizId) {
+            try {
+                const res = await fetch(`/api/quiz_results?quizId=${quizId}`);
+                if (!res.ok) throw new Error('Failed to fetch results');
+                const data = await res.json();
+                const list = data.results || [];
+                const modal = document.getElementById('quiz-results-modal');
+                const listEl = document.getElementById('quiz-results-list');
+                if (!list || list.length === 0) {
+                    listEl.innerHTML = '<p class="text-gray-500">No results yet</p>';
+                } else {
+                    listEl.innerHTML = list.map(r => `
+                        <div class="p-3 border-b">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-medium">${r.studentEmail}</div>
+                                    <div class="text-sm text-gray-600">Score: ${r.score}%</div>
+                                </div>
+                                <div class="text-xs text-gray-500">${new Date(r.completedDate).toLocaleString()}</div>
+                            </div>
+                            <pre class="text-xs mt-2 bg-gray-100 p-2 rounded">${JSON.stringify(r.answers)}</pre>
+                        </div>
+                    `).join('');
+                }
+                modal.classList.remove('hidden');
+            } catch (e) {
+                console.error(e);
+                alert('Could not load quiz results.');
+            }
+        }
+
+        function closeQuizResultsModal() {
+            document.getElementById('quiz-results-modal').classList.add('hidden');
+        }
+
+        // --- Course Detail Functions ---
+        async function viewCourse(courseId, role) {
+            currentCourse = allCourses.find(c => c.id === courseId);
+            if (!currentCourse) return;
+
+            document.getElementById('course-title').textContent = currentCourse.name;
+            document.getElementById('course-faculty').textContent = `Taught by ${currentCourse.faculty}`;
+
+            // Show/Hide enrollment panel based on role
+            document.getElementById('side-panel-enrollments').classList.toggle('hidden', role !== 'faculty');
+            document.getElementById('side-panel-quizzes').classList.toggle('hidden', role === 'faculty');
+
+            if (role === 'faculty') {
+                // For faculty, materials is on the left, enrollments is on the right
+                document.getElementById('course-materials-section').classList.remove('lg:col-span-2');
+                renderEnrollmentList(courseId);
+            } else {
+                 // For student, materials is on the left (spanning 2 cols), quizzes is on the right
+                document.getElementById('course-materials-section').classList.add('lg:col-span-2');
+            }
+
+            // Load materials
+            const materials = courseContent.filter(c => c.courseId === courseId);
+            const materialsContainer = document.getElementById('course-materials');
+            
+            if (materials.length === 0) {
+                materialsContainer.innerHTML = '<p class="text-gray-500">No materials uploaded yet</p>';
+            } else {
+                materialsContainer.innerHTML = materials.map(material => `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 rounded-lg mr-3">
+                                <i class="fas fa-${getContentIcon(material.type)} text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">${material.title}</h4>
+                                <p class="text-sm text-gray-600">${material.description}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            ${material.file_url ? `<a href="${material.file_url}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm" download><i class="fas fa-download"></i> Download</a>` : ''}
+                            ${material.url ? `<a href="${material.url}" target="_blank" class="text-red-600 hover:text-red-800 text-sm"><i class="fab fa-youtube"></i> Watch Video</a>` : ''}
+                            <span class="text-xs text-gray-500">${material.created_at ? new Date(material.created_at).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Load quizzes (only if student)
+            if (role === 'student') {
+                const courseQuizzes = quizzes.filter(q => parseInt(q.courseId) === courseId);
+                const quizzesContainer = document.getElementById('course-quizzes');
+                
+                if (courseQuizzes.length === 0) {
+                    quizzesContainer.innerHTML = '<p class="text-gray-500">No quizzes available</p>';
+                } else {
+                    quizzesContainer.innerHTML = courseQuizzes.map(quiz => {
+                        const userResult = quizResults.find(r => r.quizId === quiz.id && r.studentEmail === currentUser.email);
+                        const isCompleted = !!userResult;
+                        
+                        return `
+                            <div class="p-4 bg-gray-50 rounded-lg">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="font-medium text-gray-900">${quiz.title}</h4>
+                                    ${isCompleted ? '<i class="fas fa-check-circle text-green-500"></i>' : ''}
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">${quiz.questions.length} questions</p>
+                        ${isCompleted ? 
+                                    `<p class="text-sm text-green-600 font-medium">Score: ${userResult.score}%</p>` :
+                                    `<button onclick="startQuiz(${quiz.id})" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-all text-sm">
+                                        Start Quiz
+                                    </button>`
+                                }
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+
+
+            showView('course-detail');
+        }
+        
+        async function renderEnrollmentList(courseId) {
+            const enrollmentsContainer = document.getElementById('course-enrollment-list');
+            enrollmentsContainer.innerHTML = '<p class="text-gray-500">Fetching enrollments...</p>';
+
+            try {
+                const res = await fetch(`/api/course/${courseId}/enrollments`);
+                if (!res.ok) throw new Error("Failed to fetch enrollments");
+                
+                const data = await res.json();
+                const enrollments = data.enrollments;
+                
+                if (enrollments.length === 0) {
+                    enrollmentsContainer.innerHTML = '<p class="text-gray-500">No students enrolled in this course.</p>';
+                } else {
+                    enrollmentsContainer.innerHTML = enrollments.map(student => `
+                        <div class="flex justify-between items-center border-b border-gray-100 p-1">
+                            <span class="font-medium text-gray-800">${student.name}</span>
+                            <span class="text-xs text-gray-500">${student.email}</span>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {
+                enrollmentsContainer.innerHTML = '<p class="text-red-500">Error loading enrollments.</p>';
+                console.error('Enrollment load error:', e);
+            }
+        }
+        
+        function getContentIcon(type) {
+            switch(type) {
+                case 'lecture': return 'play-circle';
+                case 'notes': return 'file-alt';
+                case 'mindmap': return 'project-diagram';
+                default: return 'file';
+            }
+        }
+
+        // --- Data Loading (Backend Fetching) Functions ---
+        
+        async function loadAllStudents() {
+            try {
+                const res = await fetch('/api/students');
+                if (res.ok) {
+                    allStudents = (await res.json()).students;
+                }
+            } catch (e) {
+                console.error("Could not load all students:", e);
+                allStudents = [];
+            }
+        }
+        
+        async function loadFacultyContent() {
+            if (!currentUser || currentUser.role !== 'faculty') return;
+            try {
+                const res = await fetch(`/api/faculty/${currentUser.email}/content`);
+                if (!res.ok) return;
+                const data = await res.json();
+                courseContent = data.content;
+            } catch (e) {
+                console.error('Could not load faculty content', e);
+                courseContent = [];
+            }
+        }
+
+        async function loadAllContent() {
+            try {
+                const res = await fetch('/api/content');
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                // Ensure 'url' field is extracted if present (backend needs adjustment for this too, but we prepare frontend here)
+                courseContent = data.content.map(item => ({
+                    ...item,
+                    url: item.url || (item.file_path && item.type === 'lecture' && item.file_path.startsWith('http') ? item.file_path : null)
+                }));
+
+            } catch (e) {
+                console.error('Could not load all content', e);
+                courseContent = [];
+            }
+        }
+        
+        async function loadQuizzes() {
+            try {
+                const res = await fetch('/api/quizzes');
+                if (!res.ok) return;
+                const data = await res.json();
+                quizzes = data.quizzes || [];
+            } catch (e) {
+                console.error('Could not load quizzes', e);
+            }
+        }
+
+        async function loadQuizResults() {
+             try {
+                const res = await fetch(`/api/quiz_results?studentEmail=${encodeURIComponent(currentUser.email)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    quizResults = data.results;
+                }
+            } catch (e) {
+                console.error('Could not load student quiz results', e);
+                quizResults = [];
+            }
+        }
+
+
+        // --- Content Upload Functions ---
+        function showUploadModal() {
+            document.getElementById('upload-modal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('upload-modal').classList.add('hidden');
+            document.getElementById('upload-modal').querySelector('form').reset();
+        }
+
+        async function handleUpload(event) {
+            event.preventDefault();
+            
+            const courseId = document.getElementById('upload-course').value;
+            const type = document.getElementById('content-type').value;
+            const title = document.getElementById('content-title').value;
+            const description = document.getElementById('content-description').value;
+            const fileInput = document.getElementById('content-file');
+            const file = fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+            const contentUrl = document.getElementById('content-url').value.trim(); // NEW URL INPUT
+
+            try {
+                let res;
+                
+                // Priority 1: Physical File Upload
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('title', title);
+                    formData.append('type', type);
+                    formData.append('description', description);
+                    formData.append('courseId', courseId); 
+                    // Add URL field if present, but the backend will treat 'file' as the main content source.
+                    if (contentUrl) {
+                        formData.append('url', contentUrl);
+                    }
+
+                    res = await fetch(`/api/faculty/${currentUser.email}/content`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } 
+                // Priority 2: URL Upload (No physical file)
+                else if (contentUrl) {
+                    const payload = { 
+                        title, 
+                        type, 
+                        description, 
+                        courseId: parseInt(courseId), 
+                        url: contentUrl // Send the URL in the JSON payload
+                    };
+                    res = await fetch(`/api/faculty/${currentUser.email}/content`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+                // Priority 3: Text-only Upload (No file, no URL)
+                else {
+                     const payload = { 
+                        title, 
+                        type, 
+                        description, 
+                        courseId: parseInt(courseId)
+                    };
+                    res = await fetch(`/api/faculty/${currentUser.email}/content`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(`Upload failed. Server responded with status ${res.status}. Details: ${errorText}`);
+                }
+
+                closeUploadModal();
+                await loadFacultyContent(); 
+                loadFacultyDashboard();
+                alert('Content uploaded successfully!');
+            } catch (err) {
+                console.error("Upload Error:", err);
+                alert('Failed to upload content. Please check the console (F12) for server details.');
+            }
+        }
+
+        // --- Quiz Creation Functions ---
+        function showQuizModal() {
+            document.getElementById('quiz-modal').classList.remove('hidden');
+            // Reset questions
+            document.getElementById('questions-list').innerHTML = '';
+            questionCounter = 1;
+            addQuestion();
+        }
+
+        function closeQuizModal() {
+            document.getElementById('quiz-modal').classList.add('hidden');
+            document.getElementById('quiz-modal').querySelector('form').reset();
+        }
+
+        function addQuestion() {
+            const questionHtml = `
+                <div class="question-item border border-gray-200 rounded-lg p-4 mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h5 class="font-medium text-gray-900">Question ${questionCounter}</h5>
+                        <button type="button" onclick="removeQuestion(this)" class="text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="space-y-3">
+                        <input type="text" placeholder="Enter question" required class="question-text w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <input type="text" placeholder="Option A" required class="option-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" placeholder="Option B" required class="option-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" placeholder="Option C" required class="option-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <input type="text" placeholder="Option D" required class="option-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <select required class="correct-answer w-full px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="">Select correct answer</option>
+                            <option value="0">Option A</option>
+                            <option value="1">Option B</option>
+                            <option value="2">Option C</option>
+                            <option value="3">Option D</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('questions-list').insertAdjacentHTML('beforeend', questionHtml);
+            questionCounter++;
+        }
+
+        function removeQuestion(button) {
+            button.closest('.question-item').remove();
+            // Re-render question numbers (optional, but good practice)
+        }
+
+        async function handleQuizCreation(event) {
+            event.preventDefault();
+            
+            const courseId = parseInt(document.getElementById('quiz-course').value);
+            const title = document.getElementById('quiz-title-input').value;
+            
+            const questionItems = document.querySelectorAll('.question-item');
+            const questions = Array.from(questionItems).map(item => {
+                const questionText = item.querySelector('.question-text').value;
+                const options = Array.from(item.querySelectorAll('.option-input')).map(input => input.value);
+                const correctAnswer = parseInt(item.querySelector('.correct-answer').value);
+                
+                return { questionText, options, correctAnswer };
+            });
+            
+            // Basic validation
+            if (questions.some(q => q.correctAnswer === "" || q.options.some(o => o === ""))) {
+                 alert('Please fill out all questions, options, and select a correct answer for each.');
+                 return;
+            }
+
+            const payload = {
+                courseId,
+                title,
+                questions,
+                createdBy: currentUser.email
+            };
+
+            try {
+                const res = await fetch('/api/quizzes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) throw new Error('Failed to create quiz');
+
+                await loadQuizzes();
+                closeQuizModal();
+                loadFacultyDashboard();
+                alert('Quiz created successfully!');
+            } catch (e) {
+                console.error('Could not create quiz', e);
+                alert('Failed to create quiz');
+            }
+        }
+
+        // --- Student Account Creation Modal Functions ---
+        function showCreateStudentModal() {
+            document.getElementById('create-student-modal').classList.remove('hidden');
+        }
+
+        function closeCreateStudentModal() {
+            document.getElementById('create-student-modal').classList.add('hidden');
+            document.getElementById('create-student-form').reset();
+        }
+
+        async function handleStudentCreation(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('student-name').value.trim();
+            const email = document.getElementById('student-email').value.trim();
+            const password = document.getElementById('student-password').value.trim();
+
+            const payload = { name, email, password };
+            try {
+                const res = await fetch(`/api/faculty/${currentUser.email}/students`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.status === 409) {
+                    alert('A user with this email already exists!');
+                    return;
+                }
+                if (!res.ok) throw new Error('Failed to create student');
+
+                alert('Student account created and enrolled successfully!');
+                closeCreateStudentModal();
+                loadFacultyDashboard();
+            } catch (err) {
+                console.error(err);
+                alert('Could not create student.');
+            }
+        }
+
+        // --- Quiz Interface Functions ---
+        function startQuiz(quizId) {
+            currentQuiz = quizzes.find(q => q.id === quizId);
+            if (!currentQuiz) return;
+
+            currentQuestionIndex = 0;
+            quizAnswers = new Array(currentQuiz.questions.length).fill(null);
+            
+            document.getElementById('quiz-title').textContent = currentQuiz.title;
+            document.getElementById('total-questions').textContent = currentQuiz.questions.length;
+            
+            document.getElementById('quiz-content').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            
+            loadQuestion();
+            showView('quiz-interface');
+        }
+
+        function loadQuestion() {
+            const question = currentQuiz.questions[currentQuestionIndex];
+            const questionNum = currentQuestionIndex + 1;
+            
+            document.getElementById('current-question').textContent = questionNum;
+            document.getElementById('question-text').textContent = question.questionText;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = question.options.map((option, index) => `
+                <div class="quiz-option p-4 border border-gray-200 rounded-lg cursor-pointer ${quizAnswers[currentQuestionIndex] === index ? 'selected' : ''}" onclick="selectOption(${index})">
+                    <div class="flex items-center">
+                        <div class="w-4 h-4 border-2 border-gray-300 rounded-full mr-3 flex items-center justify-center">
+                            ${quizAnswers[currentQuestionIndex] === index ? '<div class="w-2 h-2 bg-indigo-600 rounded-full"></div>' : ''}
+                        </div>
+                        <span>${String.fromCharCode(65 + index)}. ${option}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Update progress
+            const progress = ((questionNum) / currentQuiz.questions.length) * 100;
+            document.getElementById('quiz-progress').style.width = progress + '%';
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestionIndex === currentQuiz.questions.length - 1) {
+                nextBtn.innerHTML = 'Finish Quiz<i class="fas fa-check ml-2"></i>';
+            } else {
+                nextBtn.innerHTML = 'Next<i class="fas fa-chevron-right ml-2"></i>';
+            }
+        }
+
+        function selectOption(optionIndex) {
+            quizAnswers[currentQuestionIndex] = optionIndex;
+            loadQuestion(); // Reload to update selection
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        async function finishQuiz() {
+            // Check if all questions are answered
+            if (quizAnswers.some(answer => answer === null)) {
+                alert('Please answer all questions before finishing the quiz.');
+                return;
+            }
+            
+            // Calculate score
+            let correctAnswers = 0;
+            currentQuiz.questions.forEach((question, index) => {
+                if (quizAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const score = Math.round((correctAnswers / currentQuiz.questions.length) * 100);
+            
+            // Save result
+            const result = {
+                quizId: currentQuiz.id,
+                studentEmail: currentUser.email,
+                score,
+                answers: quizAnswers
+            };
+            
+            try {
+                const res = await fetch('/api/quiz_results', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(result)
+                });
+                
+                if (res.status === 409) {
+                     alert('You have already submitted this quiz.');
+                } else if (!res.ok) {
+                     throw new Error('Failed to save quiz result');
+                }
+            } catch (e) {
+                console.error('Could not persist quiz result', e);
+            }
+
+            await loadQuizResults(); // Refresh local results list
+            
+            // Show results
+            document.getElementById('final-score').textContent = score + '%';
+            document.getElementById('quiz-content').classList.add('hidden');
+            document.getElementById('quiz-results').classList.remove('hidden');
+        }
+
+        function exitQuiz() {
+            document.getElementById('quiz-content').classList.remove('hidden');
+            document.getElementById('quiz-results').classList.add('hidden');
+            viewCourse(currentCourse.id, currentUser.role);
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async function() {
+            await fetchInitialData(); // Load courses and initial quizzes
+            showView('login-screen');
+        });
+    </script>
+
+
+    <footer class="text-center text-gray-500 text-sm py-4"> ©Team VedaNetra, 2025 All rights reserved</footer>
+</body>
+</html>

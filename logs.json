@@ -1,0 +1,130 @@
+[
+  {
+    "timestamp": "2025-11-21T14:02:28.567002Z",
+    "event": "add_student",
+    "details": {
+      "faculty": "kaminee@rc.edu",
+      "student": "shivam@gmail.com"
+    }
+  },
+  {
+    "timestamp": "2025-11-21T14:02:53.832650Z",
+    "event": "add_content",
+    "details": {
+      "faculty": "kaminee@rc.edu",
+      "title": "note",
+      "file": ""
+    }
+  },
+  {
+    "timestamp": "2025-11-21T14:03:48.072522Z",
+    "event": "add_student",
+    "details": {
+      "faculty": "kaminee@rc.edu",
+      "student": "anurag@gmail.com"
+    }
+  },
+  {
+    "timestamp": "2025-11-21T14:10:36.188281Z",
+    "event": "create_quiz",
+    "details": {
+      "createdBy": "kaminee@rc.edu",
+      "quizId": 1
+    }
+  },
+  {
+    "timestamp": "2025-11-21T14:11:43.439457Z",
+    "event": "quiz_result",
+    "details": {
+      "quizId": 1,
+      "student": "anurag@gmail.com",
+      "score": 100
+    }
+  },
+  {
+    "timestamp": "2025-11-21T14:26:44.689852Z",
+    "event": "add_content_error",
+    "details": {
+      "faculty": "pradip@rc.edu",
+      "error": "table content has no column named url",
+      "payload_data": "{\"title\":\"DSA \",\"type\":\"lecture\",\"description\":\"Keep it up\",\"courseId\":2,\"url\":\"https://youtu.be/qNGyI95E5AE?si=Ow76vyLwM9R9RmBM\"}"
+    }
+  },
+  {
+    "timestamp": "2025-11-21T14:28:29.593802Z",
+    "event": "add_content",
+    "details": {
+      "faculty": "kaminee@rc.edu",
+      "title": "DSA",
+      "file": "https://youtu.be/qNGyI95E5AE?si=Ow76vyLwM9R9RmBM"
+    }
+  },
+  {
+    "timestamp": "2025-11-21T18:35:46.153720Z",
+    "event": "add_student",
+    "details": {
+      "faculty": "pankaj@rc.edu",
+      "student": "anurag@rc.edu"
+    }
+  },
+  {
+    "timestamp": "2025-11-21T18:39:54.766871Z",
+    "event": "add_content",
+    "details": {
+      "faculty": "pankaj@rc.edu",
+      "title": "Basics of Economics",
+      "file": "https://youtu.be/fDrNCwWQth0?si=Vs6s29g5Hd_XB8Ci"
+    }
+  },
+  {
+    "timestamp": "2025-11-22T07:43:30.895500Z",
+    "event": "create_quiz",
+    "details": {
+      "createdBy": "kaminee@rc.edu",
+      "quizId": 1
+    }
+  },
+  {
+    "timestamp": "2025-11-22T07:44:05.167396Z",
+    "event": "quiz_result",
+    "details": {
+      "quizId": 1,
+      "student": "anurag@rc.edu",
+      "score": 50
+    }
+  },
+  {
+    "timestamp": "2025-11-22T11:11:02.148280Z",
+    "event": "create_quiz",
+    "details": {
+      "createdBy": "kaminee@rc.edu",
+      "quizId": 2
+    }
+  },
+  {
+    "timestamp": "2025-11-22T11:11:32.642393Z",
+    "event": "quiz_result",
+    "details": {
+      "quizId": 2,
+      "student": "anurag@rc.edu",
+      "score": 100
+    }
+  },
+  {
+    "timestamp": "2025-11-24T18:52:03.702686Z",
+    "event": "create_quiz",
+    "details": {
+      "createdBy": "kaminee@rc.edu",
+      "quizId": 3
+    }
+  },
+  {
+    "timestamp": "2025-11-24T18:52:53.162482Z",
+    "event": "quiz_result",
+    "details": {
+      "quizId": 3,
+      "student": "anurag@rc.edu",
+      "score": 100
+    }
+  }
+]
